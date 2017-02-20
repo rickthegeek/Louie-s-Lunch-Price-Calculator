@@ -43,7 +43,83 @@ def price_pork_meal(size):
     else: # assume regular size
         return 4.00 # double plus one side
 
+# Return a lower case letter, which is the first letter
+# of the user's entry
+# REQUIRES: a string to prompt the user with
+# RETURNS: a one character string, the first character of the user's entry
+
+def get_a_lowercase_letter(prompt):
+    entryString = ''
+    while entryString == '': # repeat until something is entered...
+        entryString = input(prompt)
+    entryString = entryString[0] # cut off all except the first letter
+    return entryString
+
+
 # This function will get the user input and return a single lower case letter
 # which is the first character of the user's entry. 
-# REQUIRES: a list of letters for allowed entries
+# REQUIRES: a set of letters for allowed entries
 # RETURNS: lower case letter, which is the first character of the user's entry.
+
+def get_checked_entry(letters):
+    entryString = get_a_lowercase_letter('Enter your choice: ')
+    while not entryString in letters:
+        print('Sorry, try again!')
+        entryString = get_a_lowercase_letter('Enter your choice: ')
+    return entryString
+
+# This function generates the tax of the order and adds it to the price
+# REQUIRES: order price
+# RETURNS: order price plus 8.25%
+
+def addTax(price):
+    return price + (price * 0.0825)
+
+# This function prints the store menu. No paramaters or return.
+
+def printMenu():
+    print('\nPrices include:')
+    print('Mini meal: single portion of meat plus one side')
+    print('Regular meal: double portion of meat plus one side')
+    print('Large meal: double portion of meat plus three sides\n\n')
+    print('Meat\t\tMini\tRegular\tLarge')
+    print('B - beef\t$4.00\t$7.00\t$9.00')
+    print('C - chicken\t$3.50\t$6.00\t$8.00')
+    print('P - pork\t$3.00\t$4.00\t$6.00\n')
+    print('X - order complete')
+    return
+
+# main code starts here
+
+orderTotal = 0.00 # This is where we store the total of the order
+mealChoice = ''
+mealPriceList = []
+sizeChoice = ''
+print('\nWelcome to Louie\'s Lunch Counter')
+print('--------------------------------\n')
+while not (mealChoice == 'x'): # the whole program repeats until the user enters 'x'
+    printMenu()
+    mealChoice = get_checked_entry(['b', 'c', 'p', 'x'])
+    if not (mealChoice == 'x'): # user entered a valid entry that wasn't X
+        sizeChoice = get_a_lowercase_letter('What size? M - mini, L - large, R - regular: ') # ask what size they want
+    if mealChoice == 'b':
+        mealPrice = price_beef_meal(sizeChoice)
+    elif mealChoice == 'c':
+        mealPrice = price_chicken_meal(sizeChoice)
+    else: 
+        mealPrice = price_pork_meal(sizeChoice) # we know it must be a pork meal, because the entry routine only allows b, c, or p
+    if not (mealChoice == 'x'): # don't need to display the prices if user choses X
+        print('\nMeal Price: $%3.2f' % mealPrice) # print the price, tax, and total
+        print('Tax: $%3.2f' % (mealPrice * 0.0825))
+        mealPrice = addTax(mealPrice)
+        print('Meal Price with Tax: $%3.2f' % mealPrice)
+        orderTotal = orderTotal + mealPrice # add the price to the total
+        mealPriceList.append(mealPrice) # add the meal price to the list we have going for the prices
+print('\nMeal prices:')
+orderCount = 1 # computer starts from zero but this won't make sense to the user
+while (orderCount - 1) < len(mealPriceList): # but LEN counts from zero....
+    print('Order', orderCount, ':\t$%3.2f' % mealPriceList[orderCount -1]) # ... so we display the order price from the list
+    orderCount += 1 # then go on to the next order
+print('\nFinal Order Total: $%3.2f' % orderTotal) # give the user the final order total
+
+
